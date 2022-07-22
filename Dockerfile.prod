@@ -1,4 +1,3 @@
-# set work directory
 WORKDIR /usr/src/app
 
 # set environment variables
