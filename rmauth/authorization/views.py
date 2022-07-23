@@ -152,6 +152,7 @@ class ProfileIDAPIView(APIView):
     def get(self, request, user_id):
         profile = Profile.objects.get(user=CustomUser.objects.get(pk=user_id))
         serializer = self.serializer_class(data=profile)
+        serializer.is_valid(raise_exception=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
@@ -216,6 +217,7 @@ class RequisitesAPIView(APIView):
     def get(self, request):
         profile = Requisites.objects.get(user=request.user)
         serializer = self.serializer_class(profile)
+        serializer.is_valid(raise_exception=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(request_body=openapi.Schema(
