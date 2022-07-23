@@ -5,8 +5,9 @@ services:
     build:
       context: ./rmauth
       dockerfile: Dockerfile.prod
-    command: gunicorn hello_django.wsgi:application --bind 0.0.0.0:8000
+    command: sh -c gunicorn --bind 0.0.0.0:8000 app.wsgi
     volumes:
+      - ./rmauth:/rmauth
       - static_volume:/home/app/web/staticfiles
     expose:
       - 8000
@@ -15,7 +16,9 @@ services:
   db:
     image: postgres:11.14-bullseye
     environment:
+      - POSTGRES_USER=my_user
       - POSTGRES_PASSWORD=mysecretpassword
+      - POSTGRES_DB=db
     ports:
       - 5432:5432
   nginx:
@@ -24,7 +27,7 @@ services:
       - static_volume:/home/app/web/staticfiles
       - media_volume:/home/app/web/mediafiles
     ports:
-      - 1337:80
+      - 80:80
     depends_on:
       - web
 
