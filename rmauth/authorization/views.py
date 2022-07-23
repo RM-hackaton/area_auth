@@ -27,8 +27,19 @@ class RefreshView(APIView):
         type=openapi.TYPE_OBJECT,
         properties={
             'access_token': openapi.Schema(type=openapi.TYPE_STRING, description='access_token for get refresh_token'),
+        },
+        required=['access_token']
+    ),
+        responses={
+            status.HTTP_200_OK: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'access_token': openapi.Schema(type=openapi.TYPE_STRING),
+                    'refresh_token': openapi.Schema(type=openapi.TYPE_STRING)
+                }
+            ),
         }
-    ))
+    )
     def post(self, request):
         try:
             refresh_token = request.data.get('refresh_token')
@@ -57,7 +68,18 @@ class RegistrationAPIView(APIView):
             'email': openapi.Schema(type=openapi.TYPE_STRING, description='email - using like username'),
             'password': openapi.Schema(type=openapi.TYPE_STRING, description='user password')
         }
-    ))
+    ),
+        responses={
+            status.HTTP_200_OK: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'email': openapi.Schema(type=openapi.TYPE_STRING),
+                    'access_token': openapi.Schema(type=openapi.TYPE_STRING),
+                    'refresh_token': openapi.Schema(type=openapi.TYPE_STRING)
+                }
+            ),
+        }
+    )
     def post(self, request):
         user = request.data
         serializer = self.serializer_class(data=user)
@@ -76,8 +98,19 @@ class LoginAPIView(APIView):
         properties={
             'email': openapi.Schema(type=openapi.TYPE_STRING, description='email - using like username'),
             'password': openapi.Schema(type=openapi.TYPE_STRING, description='user password')
+        },
+    ),
+        responses={
+            status.HTTP_200_OK: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'email': openapi.Schema(type=openapi.TYPE_STRING),
+                    'access_token': openapi.Schema(type=openapi.TYPE_STRING),
+                    'refresh_token': openapi.Schema(type=openapi.TYPE_STRING)
+                }
+            ),
         }
-    ))
+    )
     def post(self, request):
         user = request.data
 
@@ -119,6 +152,19 @@ class ProfileAPIView(APIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = ProfileSerializer
 
+    @swagger_auto_schema(responses={
+            status.HTTP_200_OK: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    "user": openapi.Schema(type=openapi.TYPE_STRING, description='email user'),
+                    "avatar": openapi.Schema(type=openapi.TYPE_FILE, description='avatar - user avatar'),
+                    "role": openapi.Schema(type=openapi.TYPE_STRING, description='user role'),
+                    "name": openapi.Schema(type=openapi.TYPE_STRING, description='human/organization name'),
+                    "phone": openapi.Schema(type=openapi.TYPE_STRING, description='user phone number')
+                }
+            )
+        }
+    )
     def get(self, request):
         profile = Profile.objects.get(user=request.user)
         serializer = self.serializer_class(profile)
@@ -131,7 +177,11 @@ class ProfileAPIView(APIView):
             'name': openapi.Schema(type=openapi.TYPE_STRING, description='name - user or organization name'),
             'phone': openapi.Schema(type=openapi.TYPE_STRING, description="user's mobile phone"),
         }
-    ))
+    ),
+        responses={
+            status.HTTP_200_OK: ''
+        }
+    )
     def post(self, request):
         profile = Profile.objects.get(user=request.user)
         data = request.data
@@ -149,6 +199,19 @@ class ProfileIDAPIView(APIView):
     permission_classes = (AllowAny,)
     serializer_class = ProfileSerializer
 
+    @swagger_auto_schema(responses={
+        status.HTTP_200_OK: openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                "user": openapi.Schema(type=openapi.TYPE_STRING, description='email user'),
+                "avatar": openapi.Schema(type=openapi.TYPE_FILE, description='avatar - user avatar'),
+                "role": openapi.Schema(type=openapi.TYPE_STRING, description='user role'),
+                "name": openapi.Schema(type=openapi.TYPE_STRING, description='human/organization name'),
+                "phone": openapi.Schema(type=openapi.TYPE_STRING, description='user phone number')
+            }
+        )
+    }
+    )
     def get(self, request, user_id):
         profile = Profile.objects.get(user=CustomUser.objects.get(pk=user_id))
         serializer = self.serializer_class(profile)
@@ -168,7 +231,9 @@ class CreateProfileAPIView(APIView):
             'name': openapi.Schema(type=openapi.TYPE_STRING, description='name - user or organization name'),
             'phone': openapi.Schema(type=openapi.TYPE_STRING, description="user's mobile phone"),
         }
-    ))
+    ), responses={
+            status.HTTP_201_CREATED: ''
+        })
     def post(self, request):
         data = request.data
         Profile.objects.get_or_create(
@@ -195,7 +260,9 @@ class CreateRequisitesAPIView(APIView):
             'city': openapi.Schema(type=openapi.TYPE_STRING, description='city'),
             'cor_payment': openapi.Schema(type=openapi.TYPE_STRING, description='cor_payment'),
         }
-    ))
+    ), responses={
+            status.HTTP_201_CREATED: ''
+        })
     def post(self, request):
         data = request.data
         Requisites.objects.get_or_create(
@@ -214,6 +281,21 @@ class RequisitesAPIView(APIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = RequisitesSerializer
 
+    @swagger_auto_schema(responses={
+        status.HTTP_200_OK: openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                "user": openapi.Schema(type=openapi.TYPE_STRING, description='email user'),
+                'inn': openapi.Schema(type=openapi.TYPE_STRING, description='user INN(ИНН)'),
+                'payment': openapi.Schema(type=openapi.TYPE_STRING, description='payment - user or organization payment'),
+                'bank_name': openapi.Schema(type=openapi.TYPE_STRING, description='bank name, where user is in'),
+                'bik': openapi.Schema(type=openapi.TYPE_STRING, description='bik'),
+                'city': openapi.Schema(type=openapi.TYPE_STRING, description='city'),
+                'cor_payment': openapi.Schema(type=openapi.TYPE_STRING, description='cor_payment'),
+            }
+        )
+    }
+    )
     def get(self, request):
         profile = Requisites.objects.get(user=request.user)
         serializer = self.serializer_class(profile)
@@ -230,7 +312,9 @@ class RequisitesAPIView(APIView):
             'city': openapi.Schema(type=openapi.TYPE_STRING, description='city'),
             'cor_payment': openapi.Schema(type=openapi.TYPE_STRING, description='cor_payment'),
         }
-    ))
+    ), responses={
+            status.HTTP_200_OK: ''
+        })
     def post(self, request):
         requisites = Requisites.objects.get(user=request.user)
         data = request.data
@@ -254,6 +338,22 @@ class RequisitesIDAPIView(APIView):
     permission_classes = (AllowAny,)
     serializer_class = RequisitesSerializer
 
+    @swagger_auto_schema(responses={
+        status.HTTP_200_OK: openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                "user": openapi.Schema(type=openapi.TYPE_STRING, description='email user'),
+                'inn': openapi.Schema(type=openapi.TYPE_STRING, description='user INN(ИНН)'),
+                'payment': openapi.Schema(type=openapi.TYPE_STRING,
+                                          description='payment - user or organization payment'),
+                'bank_name': openapi.Schema(type=openapi.TYPE_STRING, description='bank name, where user is in'),
+                'bik': openapi.Schema(type=openapi.TYPE_STRING, description='bik'),
+                'city': openapi.Schema(type=openapi.TYPE_STRING, description='city'),
+                'cor_payment': openapi.Schema(type=openapi.TYPE_STRING, description='cor_payment'),
+            }
+        )
+    }
+    )
     def get(self, request, user_id):
         if Profile.objects.get(user=request.user).role == 'Developer':
             profile = Requisites.objects.get(user=CustomUser.objects.get(pk=user_id))
