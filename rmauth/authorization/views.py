@@ -129,7 +129,7 @@ class ProfileAPIView(APIView):
         properties={
             'avatar': openapi.Schema(type=openapi.TYPE_STRING, description='avatar - user avatar'),
             'name': openapi.Schema(type=openapi.TYPE_STRING, description='name - user or organization name'),
-            'inn': openapi.Schema(type=openapi.TYPE_STRING, description='user INN(ИНН)')
+            'phone': openapi.Schema(type=openapi.TYPE_STRING, description="user's mobile phone"),
         }
     ))
     def post(self, request):
@@ -139,6 +139,8 @@ class ProfileAPIView(APIView):
             profile.avatar = data['avatar']
         if data['name']:
             profile.fio = data['name']
+        if data['phone']:
+            profile.phone = data['phone']
         profile.save()
         return Response(status=status.HTTP_200_OK)
 
@@ -162,7 +164,8 @@ class CreateProfileAPIView(APIView):
         properties={
             'email': openapi.Schema(type=openapi.TYPE_STRING, description='user email'),
             'avatar': openapi.Schema(type=openapi.TYPE_FILE, description='avatar - user avatar'),
-            'name': openapi.Schema(type=openapi.TYPE_STRING, description='name - user or organization name')
+            'name': openapi.Schema(type=openapi.TYPE_STRING, description='name - user or organization name'),
+            'phone': openapi.Schema(type=openapi.TYPE_STRING, description="user's mobile phone"),
         }
     ))
     def post(self, request):
@@ -170,7 +173,8 @@ class CreateProfileAPIView(APIView):
         Profile.objects.get_or_create(
             user=request.user,
             avatar=data["avatar"],
-            name=data["name"]
+            name=data["name"],
+            phone=data["phone"]
         )
         return Response(status=status.HTTP_201_CREATED)
 

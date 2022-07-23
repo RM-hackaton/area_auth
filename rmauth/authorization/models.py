@@ -29,9 +29,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 class Profile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     '''Nothing, Renter, Owner, Developer'''
-    role = models.CharField(max_length=30, default='Nothing')
+    role = models.CharField(max_length=30, default='Nobody')
     avatar = models.ImageField(upload_to='images/', blank=True, null=True)
     name = models.CharField(max_length=50)
+    phone = models.CharField(max_length=13, null=True, default=None)
 
     def __str__(self):
         return self.name
