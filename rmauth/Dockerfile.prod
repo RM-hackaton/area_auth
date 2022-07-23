@@ -1,15 +1,13 @@
 WORKDIR /usr/src/app
 
-# set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 COPY . .
-# install psycopg2 dependencies
+
 RUN apk --update --no-cache --virtual .tmp-build-deps \
     gcc libc-dev linux-headers postgresql-dev && \
     && pip install --no-cache-dir -r requirements.txt
 
-# install dependencies
 COPY ../requirements.txt .
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.txt
