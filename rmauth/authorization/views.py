@@ -150,7 +150,7 @@ class ProfileIDAPIView(APIView):
     serializer_class = ProfileSerializer
 
     def get(self, request, user_id):
-        profile = Profile.objects.get(pk=user_id)
+        profile = Profile.objects.get(user=CustomUser.objects.get(pk=user_id))
         serializer = self.serializer_class(data=profile)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
@@ -254,7 +254,7 @@ class RequisitesIDAPIView(APIView):
 
     def get(self, request, user_id):
         if Profile.objects.get(user=request.user).role == 'Developer':
-            profile = Requisites.objects.get(pk=user_id)
+            profile = Requisites.objects.get(user=CustomUser.objects.get(pk=user_id))
             serializer = self.serializer_class(data=profile)
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         else:
