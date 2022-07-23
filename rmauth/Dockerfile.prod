@@ -9,7 +9,7 @@ COPY . .
 
 RUN apk --update --no-cache --virtual .tmp-build-deps \
     gcc libc-dev linux-headers postgresql-dev && \
-    && pip install --no-cache-dir -r requirements.txt
+    pip install --no-cache-dir -r requirements.txt
 
 COPY ../requirements.txt .
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.txt
