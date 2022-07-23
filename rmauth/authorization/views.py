@@ -151,8 +151,8 @@ class ProfileIDAPIView(APIView):
 
     def get(self, request, user_id):
         profile = Profile.objects.get(user=CustomUser.objects.get(pk=user_id))
-        serializer = self.serializer_class(data=profile)
-        serializer.is_valid(raise_exception=True)
+        serializer = self.serializer_class(profile)
+        # serializer.is_valid(raise_exception=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
